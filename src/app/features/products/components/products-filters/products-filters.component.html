@@ -1,0 +1,36 @@
+<form
+  class="filters-container"
+  *ngIf="productsFilterForm"
+  [formGroup]="productsFilterForm"
+>
+  <mat-form-field>
+    <mat-label>Search...</mat-label>
+    <input formControlName="searchTerm" matInput placeholder="Search product" />
+    <mat-error *ngIf="productsFilterForm.get('searchTerm')?.getError('pattern')"
+      >Invalid search term</mat-error
+    >
+    <mat-error
+      *ngIf="productsFilterForm.get('searchTerm')?.getError('maxlength')"
+      >Maximum 50 characters</mat-error
+    >
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Category</mat-label>
+    <mat-select formControlName="category">
+      <mat-option *ngFor="let category of productCategory" [value]="category">
+        {{ category | titleCaseEnum }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-slider
+    [min]="productsFilterForm.get('validatorMin')?.value"
+    [max]="productsFilterForm.get('validatorMax')?.value"
+    showTickMarks
+    discrete
+  >
+    <input formControlName="min" matSliderStartThumb />
+    <input formControlName="max" matSliderEndThumb />
+  </mat-slider>
+</form>

@@ -1,0 +1,4 @@
+export enum ProductsOrderingModel {
+  NEWEST_UPLOAD_DATE = 'NEWEST_UPLOAD_DATE',
+  OLDEST_UPLOAD_DATE = 'OLDEST_UPLOAD_DATE',
+}

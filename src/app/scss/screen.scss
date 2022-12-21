@@ -1,0 +1,43 @@
+$breakpoint-xxs: 20em; // custom
+$breakpoint-xs: 30em;
+$breakpoint-sm: 48em;
+$breakpoint-md: 64em;
+$breakpoint-lg: 75em;
+
+// 320px - 479px, not implemented by flexbox grid
+@mixin xxs-screen {
+  @media only screen and (min-width: $breakpoint-xxs) {
+    @content;
+  }
+}
+
+/**
+  Those mixins are built based on the flexbox grid metric
+*/
+// 480px - 767px
+@mixin xs-screen {
+  @media only screen and (min-width: $breakpoint-xs) {
+    @content;
+  }
+}
+
+// 768px - 1023px
+@mixin sm-screen {
+  @media only screen and (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+// 1024px - 1199px
+@mixin md-screen {
+  @media only screen and (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+//1200px ~
+@mixin lg-screen {
+  @media only screen and (min-width: $breakpoint-lg) {
+    @content;
+  }
+}

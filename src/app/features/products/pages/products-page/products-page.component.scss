@@ -1,0 +1,13 @@
+@use "src/app/scss/sizes" as sizes;
+
+app-products-pagination {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
+  left: 0;
+}
+
+.products-container {
+  padding: 2 * sizes.$spacing sizes.$spacing sizes.$spacing;
+}

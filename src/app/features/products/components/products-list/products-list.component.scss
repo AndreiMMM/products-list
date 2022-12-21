@@ -1,0 +1,63 @@
+@use "src/app/scss/colors.scss" as colors;
+@use "src/app/scss/sizes" as sizes;
+@use "src/app/scss/screen" as screens;
+
+.products-list-container {
+  display: grid;
+  gap: sizes.$spacing;
+  padding: sizes.$spacing;
+
+  > mat-card {
+    padding: sizes.$spacing;
+    background: colors.$background;
+    min-width: 0;
+    width: 100%;
+
+    mat-card-header {
+      display: inline-block;
+      width: 100%;
+    }
+
+    .description {
+      word-break: break-all;
+      -webkit-box-orient: vertical;
+      display: block;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      height: 3.5rem;
+    }
+
+    mat-card-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      width: 100%;
+    }
+  }
+}
+
+@include screens.xxs-screen() {
+  .products-list-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@include screens.sm-screen() {
+  .products-list-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@include screens.md-screen() {
+  .products-list-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@include screens.lg-screen() {
+  .products-list-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

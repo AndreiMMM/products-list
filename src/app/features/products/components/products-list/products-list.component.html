@@ -1,0 +1,19 @@
+<div class="products-list-container">
+  <mat-card *ngFor="let product of products">
+    <mat-card-header>
+      <mat-card-subtitle
+        ><mat-chip-option disabled>{{
+          product.category
+        }}</mat-chip-option></mat-card-subtitle
+      >
+      <mat-card-title [matTooltip]="product.name">{{
+        product.name
+      }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p class="description">{{ product.description }}</p>
+      <mat-divider></mat-divider>
+      <h3>{{ product.price | currency }}</h3>
+    </mat-card-content>
+  </mat-card>
+</div>

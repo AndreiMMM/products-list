@@ -1,0 +1,27 @@
+@use "src/app/scss/sizes" as sizes;
+@use "src/app/scss/screen" as screens;
+
+.sorting-container {
+  display: grid;
+  gap: 2 * sizes.$spacing;
+  padding: 0 sizes.$spacing;
+  margin-top: sizes.$spacing;
+}
+
+@include screens.xxs-screen() {
+  .sorting-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@include screens.sm-screen() {
+  .sorting-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@include screens.md-screen() {
+  .sorting-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

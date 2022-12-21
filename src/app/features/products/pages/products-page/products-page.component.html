@@ -1,0 +1,24 @@
+<div class="products-container">
+  <app-products-filters
+    [productsFilterForm]="productsFacadeService.productsFormService.filtersForm"
+  ></app-products-filters>
+
+  <app-products-sorting
+    [productsSortingForm]="
+      productsFacadeService.productsFormService.sortingForm
+    "
+  ></app-products-sorting>
+
+  <div class="center" *ngIf="loading$ | async"><mat-spinner></mat-spinner></div>
+
+  <app-products-list
+    *ngIf="!(loading$ | async) || (products$ | async)"
+    [products]="products$ | async"
+  ></app-products-list>
+
+  <app-products-pagination
+    [productsPaginationForm]="
+      productsFacadeService.productsFormService.paginationForm
+    "
+  ></app-products-pagination>
+</div>
