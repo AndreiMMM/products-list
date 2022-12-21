@@ -38,10 +38,10 @@ export class ProductsFormService {
     this.filtersForm = new FormGroup({
       searchTerm: new FormControl('', Validators.maxLength(50)),
       category: new FormControl(),
-      min: new FormControl(0, [Validators.min(0), Validators.max(0)]),
-      validatorMin: new FormControl(0, [Validators.min(0), Validators.max(0)]),
-      max: new FormControl(0, [Validators.min(0), Validators.max(0)]),
-      validatorMax: new FormControl(0, [Validators.min(0), Validators.max(0)]),
+      min: new FormControl(0),
+      validatorMin: new FormControl(0),
+      max: new FormControl(0),
+      validatorMax: new FormControl(0),
     });
   }
 
