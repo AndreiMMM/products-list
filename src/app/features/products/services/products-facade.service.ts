@@ -7,12 +7,16 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
+  iif,
+  map,
   merge,
   Observable,
   of,
+  Subscription,
   switchMap,
   takeUntil,
   tap,
+  withLatestFrom,
 } from 'rxjs';
 // Models
 import { IProductsModel } from '../models/products.model';
@@ -34,10 +38,18 @@ export class ProductsFacadeService {
     IProductsModel[]
   >([]);
 
+  public readonly subscriptions: Subscription[] = [];
+
   constructor(
     private readonly productsApiService: ProductsApiService,
     public readonly productsFormService: ProductsFormService
   ) {}
+
+  public onDestroy(): void {
+    this.subscriptions.forEach((s) => {
+      s.unsubscribe();
+    });
+  }
 
   public loadProducts(
     filters: IProductFilterModel,
@@ -69,32 +81,35 @@ export class ProductsFacadeService {
       pagination.valueChanges
     );
 
-    filtering
-      .pipe(
-        debounceTime(200),
-        tap((s) => console.log(s)),
-        distinctUntilChanged(
-          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
-        ),
-        tap((s) => console.log('passed')),
-        tap(() => this.loading$.next(true)),
-        tap(() => this.products$.next([])),
-        switchMap((_) =>
-          this.loadProducts(
-            filters.value as IProductFilterModel,
-            sorting.value.sortBy,
-            pagination.value
-          ).pipe(takeUntil(filtering))
-        ),
-        catchError(() => {
-          return of([]);
+    this.subscriptions.push(
+      filtering
+        .pipe(
+          debounceTime(200),
+          distinctUntilChanged(
+            (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+          ),
+          tap(() => this.loading$.next(true)),
+          switchMap((_) =>
+            iif(
+              () => filters.valid,
+              this.loadProducts(
+                filters.value as IProductFilterModel,
+                sorting.value.sortBy,
+                pagination.value
+              ).pipe(takeUntil(filtering)),
+              of([])
+            )
+          ),
+          catchError(() => {
+            return of([]);
+          })
+        )
+        .subscribe((products) => {
+          this.initMetaData(products);
+          this.products$.next(products);
+          this.loading$.next(false);
         })
-      )
-      .subscribe((products) => {
-        this.initMetaData(products);
-        this.products$.next(products);
-        this.loading$.next(false);
-      });
+    );
   }
 
   private initMetaData(products: IProductsModel[]): void {
@@ -117,7 +132,7 @@ export class ProductsFacadeService {
     this.productsFormService.filtersForm?.patchValue(
       {
         validatorMin: min,
-        validatorMax: max
+        validatorMax: max,
       },
       { emitEvent: false }
     );

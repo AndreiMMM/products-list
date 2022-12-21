@@ -36,12 +36,12 @@ export class ProductsFormService {
 
   private initFiltersForm(): void {
     this.filtersForm = new FormGroup({
-      searchTerm: new FormControl(Validators.maxLength(50)),
+      searchTerm: new FormControl('', Validators.maxLength(50)),
       category: new FormControl(),
-      min: new FormControl(Validators.min(0), Validators.max(0)),
-      validatorMin: new FormControl(Validators.min(0), Validators.max(0)),
-      max: new FormControl(Validators.min(0), Validators.max(0)),
-      validatorMax: new FormControl(Validators.min(0), Validators.max(0)),
+      min: new FormControl(0, [Validators.min(0), Validators.max(0)]),
+      validatorMin: new FormControl(0, [Validators.min(0), Validators.max(0)]),
+      max: new FormControl(0, [Validators.min(0), Validators.max(0)]),
+      validatorMax: new FormControl(0, [Validators.min(0), Validators.max(0)]),
     });
   }
 
@@ -60,7 +60,7 @@ export class ProductsFormService {
 
   private initSortingForm() {
     this.sortingForm = new FormGroup({
-      sortBy: new FormControl(Validators.pattern(/^[A-Za-z]+$/)),
+      sortBy: new FormControl(''),
     });
   }
 
@@ -75,8 +75,8 @@ export class ProductsFormService {
 
   private initPaginationForm() {
     this.paginationForm = new FormGroup({
-      take: new FormControl(Validators.min(0), Validators.max(100)),
-      offset: new FormControl(Validators.min(0), Validators.max(20)),
+      take: new FormControl(0, [Validators.min(0), Validators.max(100)]),
+      offset: new FormControl(0, [Validators.min(0), Validators.max(20)]),
     });
   }
 
