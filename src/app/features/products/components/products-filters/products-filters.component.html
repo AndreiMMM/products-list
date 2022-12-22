@@ -25,6 +25,7 @@
   </mat-form-field>
 
   <mat-slider
+    *ngIf="productsFilterForm.get('validatorMax')?.value"
     [min]="productsFilterForm.get('validatorMin')?.value"
     [max]="productsFilterForm.get('validatorMax')?.value"
     showTickMarks

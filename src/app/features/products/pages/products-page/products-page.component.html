@@ -17,6 +17,7 @@
   ></app-products-list>
 
   <app-products-pagination
+    [totalCount]="productsFacadeService.productsFormService.totalCountProducts"
     [productsPaginationForm]="
       productsFacadeService.productsFormService.paginationForm
     "

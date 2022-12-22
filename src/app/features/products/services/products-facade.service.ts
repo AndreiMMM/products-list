@@ -8,7 +8,6 @@ import {
   debounceTime,
   distinctUntilChanged,
   iif,
-  map,
   merge,
   Observable,
   of,
@@ -16,7 +15,6 @@ import {
   switchMap,
   takeUntil,
   tap,
-  withLatestFrom,
 } from 'rxjs';
 // Models
 import { IProductsModel } from '../models/products.model';
@@ -37,8 +35,10 @@ export class ProductsFacadeService {
   public products$: BehaviorSubject<IProductsModel[]> = new BehaviorSubject<
     IProductsModel[]
   >([]);
+  public totalProducts: IProductsModel[] = [];
 
-  public readonly subscriptions: Subscription[] = [];
+  private prevFilter: IProductFilterModel = {} as IProductFilterModel;
+  private readonly subscriptions: Subscription[] = [];
 
   constructor(
     private readonly productsApiService: ProductsApiService,
@@ -46,6 +46,8 @@ export class ProductsFacadeService {
   ) {}
 
   public onDestroy(): void {
+    this.productsFormService.onDestroy();
+
     this.subscriptions.forEach((s) => {
       s.unsubscribe();
     });
@@ -88,6 +90,7 @@ export class ProductsFacadeService {
           distinctUntilChanged(
             (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
           ),
+          tap(() => this.products$.next([])),
           tap(() => this.loading$.next(true)),
           switchMap((_) =>
             iif(
@@ -105,14 +108,15 @@ export class ProductsFacadeService {
           })
         )
         .subscribe((products) => {
-          this.initMetaData(products);
-          this.products$.next(products);
+          this.totalProducts = products;
+          this.initMetaData();
+          this.handleFilters();
           this.loading$.next(false);
         })
     );
   }
 
-  private initMetaData(products: IProductsModel[]): void {
+  private initMetaData(products: IProductsModel[] = this.totalProducts): void {
     let min = products[0]?.price,
       max = products[0]?.price;
 
@@ -125,6 +129,9 @@ export class ProductsFacadeService {
       }
     });
 
+    // used to refresh ranger
+    const prevMax = this.productsFormService.filtersForm?.getRawValue().max;
+
     this.productsFormService.filtersForm?.setValidators([
       Validators.min(min),
       Validators.max(max),
@@ -133,8 +140,42 @@ export class ProductsFacadeService {
       {
         validatorMin: min,
         validatorMax: max,
+        max: prevMax,
       },
       { emitEvent: false }
     );
+  }
+
+  private handleFilters(): IProductsModel[] {
+    let filteredProducts: IProductsModel[];
+
+    // Filters
+    const filters = this.productsFormService.filtersForm?.value;
+    this.prevFilter = filters;
+
+    filteredProducts = this.totalProducts.filter((product) => {
+      const searchTermFilter =
+        product.name.includes(filters.searchTerm) ||
+        product.description.includes(filters.searchTerm);
+      const categoryFilter = product.category === filters.category;
+      const priceFilter =
+        product.price <= filters.max && product.price >= filters.min;
+
+      return searchTermFilter && categoryFilter && priceFilter;
+    });
+
+    // Pagination
+    const pagination = this.productsFormService.paginationForm
+      ?.value as IPageModel;
+    this.productsFormService.totalCountProducts = filteredProducts.length;
+    filteredProducts = [
+      ...filteredProducts.slice(
+        pagination.offset,
+        (pagination.offset + 1) * pagination.take
+      ),
+    ];
+
+    this.products$.next(filteredProducts);
+    return filteredProducts;
   }
 }

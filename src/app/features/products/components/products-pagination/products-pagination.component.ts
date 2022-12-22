@@ -10,6 +10,8 @@ import { ProductsFormService } from '../../services/products-form.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductsPaginationComponent {
-  constructor(public readonly productsFormService: ProductsFormService) {}
+  @Input() totalCount = 0;
   @Input() productsPaginationForm: FormGroup | undefined;
+
+  constructor(public readonly productsFormService: ProductsFormService) {}
 }

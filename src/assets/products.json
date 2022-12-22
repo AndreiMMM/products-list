@@ -114,7 +114,13 @@
   {
     "name": "nume 4",
     "price": 1,
-    "category": "MUSIC",
+    "category": "SPORT",
     "description": "description"
+  },
+  {
+    "name": "nume 4",
+    "price": 1,
+    "category": "SPORT",
+    "description": "desczzzzription"
   }
 ]

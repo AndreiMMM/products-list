@@ -1,5 +1,5 @@
 // Core
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
 // Services
 import { ProductsFacadeService } from '../../services/products-facade.service';
 
@@ -14,6 +14,7 @@ export class ProductsPageComponent implements OnDestroy {
   public loading$ = this.productsFacadeService.loading$;
 
   constructor(public readonly productsFacadeService: ProductsFacadeService) {}
+
 
   public ngOnDestroy(): void {
     this.productsFacadeService.onDestroy();

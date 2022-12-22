@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 // Material
 import { PageEvent } from '@angular/material/paginator';
+import { Subscription } from 'rxjs';
 // Models
 import { ProductCategoryEnum } from '../models/product-category.enum';
 import { ProductsOrderingModel } from '../models/products-ordering.model';
@@ -18,9 +19,14 @@ import { ProductsOrderingModel } from '../models/products-ordering.model';
 export class ProductsFormService {
   constructor() {}
 
+  public totalCountProducts = 0;
   public filtersForm: UntypedFormGroup | undefined;
   public sortingForm: UntypedFormGroup | undefined;
   public paginationForm: UntypedFormGroup | undefined;
+
+  public paginationIndex = 0;
+
+  private subscriptions: Subscription[] = [];
 
   public initForms(): void {
     this.initFiltersForm();
@@ -32,6 +38,27 @@ export class ProductsFormService {
     this.setFiltersDefault();
     this.setSortingDefault();
     this.setPaginationDefault();
+
+    if (this.filtersForm) {
+      this.subscriptions.push(
+        this.filtersForm.valueChanges.subscribe((pagination) => {
+          this.paginationIndex = pagination.offset;
+        })
+      );
+    }
+  }
+
+  public onDestroy(): void {
+    this.subscriptions.forEach((s) => {
+      s.unsubscribe();
+    });
+  }
+
+  public updatePagination(pagination: PageEvent): void {
+    this.paginationForm?.setValue({
+      take: pagination.pageSize,
+      offset: pagination.pageIndex * pagination.pageSize,
+    });
   }
 
   private initFiltersForm(): void {
@@ -40,22 +67,20 @@ export class ProductsFormService {
       category: new FormControl(),
       min: new FormControl(0),
       validatorMin: new FormControl(0),
-      max: new FormControl(0),
+      max: new FormControl(10),
       validatorMax: new FormControl(0),
     });
   }
 
   private setFiltersDefault(): void {
-    this.filtersForm?.setValue(
-      {
-        searchTerm: '',
-        category: ProductCategoryEnum.DANCE,
-        min: 0,
-        validatorMin: 0,
-        validatorMax: 0,
-        max: 0,
-      },
-    );
+    this.filtersForm?.setValue({
+      searchTerm: '',
+      category: ProductCategoryEnum.MUSIC,
+      min: 0,
+      validatorMin: 0,
+      validatorMax: 10,
+      max: 10,
+    });
   }
 
   private initSortingForm() {
@@ -83,17 +108,10 @@ export class ProductsFormService {
   private setPaginationDefault(): void {
     this.paginationForm?.setValue(
       {
-        take: 0,
-        offset: 20,
+        take: 10,
+        offset: 0,
       },
       { emitEvent: false }
     );
-  }
-
-  public updatePagination(pagination: PageEvent): void {
-    this.paginationForm?.setValue({
-      take: pagination.pageSize,
-      offset: pagination.pageIndex * pagination.pageSize,
-    });
   }
 }
